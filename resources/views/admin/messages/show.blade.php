@@ -1,0 +1,5 @@
+@extends('layouts.admin')
+@section('title','Message')
+@section('content')
+<div class="d-flex justify-content-between mb-4"><h1 class="h3">Message details</h1><a href="{{ route('admin.messages.index') }}" class="btn btn-light">Back</a></div><div class="admin-panel"><h4>{{ $message->subject }}</h4><p class="text-muted">From {{ $message->name }} · {{ $message->email }} · {{ $message->created_at->format('d M Y, h:i A') }}</p><p>Phone: {{ $message->phone ?: '—' }}</p><hr><p style="white-space:pre-wrap">{{ $message->message }}</p><a class="btn btn-success" href="mailto:{{ $message->email }}?subject={{ urlencode('Re: '.$message->subject) }}">Reply by email</a><form class="d-inline" method="POST" action="{{ route('admin.messages.read',$message) }}">@csrf @method('PATCH')<button class="btn btn-outline-primary">Mark as read</button></form><form class="d-inline" method="POST" action="{{ route('admin.messages.destroy',$message) }}" onsubmit="return confirm('Delete this message?')">@csrf @method('DELETE')<button class="btn btn-outline-danger">Delete</button></form></div>
+@endsection

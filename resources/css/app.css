@@ -1,0 +1,27 @@
+@import 'bootstrap/dist/css/bootstrap.min.css';
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+}
+
+/* Professional Youth Academy — CEO message additions */
+.ceo-green { color: #075b39; }
+.ceo-home-card { background: #f7faf8; border: 1px solid #e5eee8; border-radius: 1.25rem; padding: clamp(1.25rem, 3vw, 3rem); }
+.ceo-home-card h2, .ceo-message-section .section-heading h2 { color: #073f2c; font-weight: 800; }
+.ceo-home-image { display: block; width: min(100%, 340px); height: auto; max-height: 520px; object-fit: contain; margin: 0 auto; border-radius: .75rem; box-shadow: 0 1rem 2.5rem rgba(0,45,27,.14); }
+.ceo-message-section { background: linear-gradient(180deg, #f8fbf9 0%, #fff 100%); }
+.ceo-message-copy { background: #fff; border: 1px solid #e5eee8; border-radius: 1rem; padding: clamp(1.25rem, 3vw, 2.5rem); box-shadow: 0 .75rem 2rem rgba(0,45,27,.06); color: #303a35; line-height: 1.85; font-size: 1.04rem; }
+.ceo-message-copy h3 { color: #075b39; font-weight: 750; line-height: 1.3; }
+.ceo-message-copy p { margin-bottom: 1.25rem; }
+.ceo-message-copy .ceo-signoff { color: #075b39; font-weight: 750; margin-top: 1.75rem; }
+.ceo-signature { border-top: 3px solid #65ad43; padding-top: .9rem; margin-top: 2rem; max-width: 360px; }
+.ceo-signature h3 { margin: 0; font-size: 1.8rem; }
+.ceo-signature p { color: #28342e; margin: .15rem 0 0; line-height: 1.4; }
+.ceo-original-figure { margin: 0 auto; max-width: 520px; }
+.ceo-original-image { display: block; width: 100%; height: auto; object-fit: contain; border-radius: .75rem; box-shadow: 0 1rem 2.5rem rgba(0,45,27,.14); }
+.footer-contact-link { display: block; color: rgba(255,255,255,.72); text-decoration: none; margin-bottom: .25rem; overflow-wrap: anywhere; }
+.footer-contact-link:hover { color: #fff; text-decoration: underline; }
+.contact-detail a { color: inherit; text-decoration: none; }
+.contact-detail a:hover { text-decoration: underline; }
+@media (max-width: 575.98px) { .ceo-home-card { border-radius: .75rem; } .ceo-message-copy { font-size: 1rem; } }

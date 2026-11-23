@@ -1,0 +1,7 @@
+@extends('layouts.admin')
+@section('title','Enrollments')
+@section('content')
+<h1 class="h3">Enrollment applications</h1><p class="text-muted">Contact applicants offline, then record the admission decision here.</p>
+<form class="row g-2 mb-3"><div class="col-md-5"><input class="form-control" name="q" value="{{ request('q') }}" placeholder="Search name, phone or reference"></div><div class="col-md-3"><select name="status" class="form-select"><option value="">All statuses</option>@foreach(['pending','confirmed','rejected'] as $s)<option value="{{ $s }}" @selected(request('status')==$s)>{{ ucfirst($s) }}</option>@endforeach</select></div><div class="col-md-2"><button class="btn btn-navy">Filter</button></div></form>
+<div class="admin-panel table-responsive"><table class="table align-middle"><thead><tr><th>Reference</th><th>Student</th><th>Phone</th><th>Diploma</th><th>Applied</th><th>Status</th><th></th></tr></thead><tbody>@forelse($enrollments as $e)<tr><td>{{ $e->reference }}</td><td>{{ $e->full_name }}</td><td>{{ $e->phone }}</td><td>{{ $e->diploma?->title }}</td><td>{{ $e->created_at->format('d M Y') }}</td><td><span class="status status-{{ $e->status }}">{{ ucfirst($e->status) }}</span></td><td><a class="btn btn-sm btn-outline-primary" href="{{ route('admin.enrollments.show',$e) }}">Review</a></td></tr>@empty<tr><td colspan="7">No applications found.</td></tr>@endforelse</tbody></table>{{ $enrollments->links() }}</div>
+@endsection

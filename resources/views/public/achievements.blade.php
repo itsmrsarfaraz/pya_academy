@@ -1,0 +1,6 @@
+@extends('layouts.public')
+@section('title','Student Achievements')
+@section('content')
+<section class="page-hero"><div class="container"><span class="eyebrow">OUR STUDENTS</span><h1>Progress worth celebrating.</h1><p>Explore qualifications and milestones shared by our academy community.</p></div></section>
+<section class="section-pad"><div class="container"><div class="row g-4">@forelse($achievements as $a)<div class="col-md-6 col-lg-4"><div class="achievement-card h-100">@if($a->student_photo)<img src="{{ asset('storage/'.$a->student_photo) }}" alt="{{ $a->student_name }}">@else<div class="achievement-placeholder">★</div>@endif<div class="p-4"><h5>{{ $a->student_name }}</h5><p class="fw-semibold mb-1">{{ $a->diploma_title }}</p><small class="text-muted">{{ $a->awarding_body }} · {{ $a->completion_year }}</small>@if($a->story)<p class="text-muted small mt-3">{{ $a->story }}</p>@endif @if($a->certificate_image)<a href="{{ asset('storage/'.$a->certificate_image) }}" target="_blank" class="btn btn-sm btn-outline-navy mt-2">View certificate image</a>@endif</div></div></div>@empty<div class="col-12 text-center py-5"><h4>Achievements coming soon</h4><p class="text-muted">Student success stories will appear here.</p></div>@endforelse</div><div class="mt-4">{{ $achievements->links() }}</div></div></section>
+@endsection
