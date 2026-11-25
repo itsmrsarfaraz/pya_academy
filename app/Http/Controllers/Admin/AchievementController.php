@@ -4,41 +4,87 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Achievement;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\View\View;
 
 class AchievementController extends Controller
 {
-    public function index() { return view('admin.achievements.index',['achievements'=>Achievement::latest()->paginate(15)]); }
-    public function create() { return view('admin.achievements.form',['achievement'=>new Achievement()]); }
-    public function store(Request $request) {
-        $data=$this->validated($request);
-        if ($request->hasFile('student_photo')) $data['student_photo']=$request->file('student_photo')->store('achievements/students','public');
-        if ($request->hasFile('certificate_image')) $data['certificate_image']=$request->file('certificate_image')->store('achievements/certificates','public');
-        Achievement::create($data);
-        return redirect()->route('admin.achievements.index')->with('success','Achievement created.');
+    public function index(): View
+    {
+        $achievements = Achievement::orderBy('sort_order')->latest()->paginate(12);
+
+        return view('admin.achievements.index', compact('achievements'));
     }
-    public function edit(Achievement $achievement) { return view('admin.achievements.form',compact('achievement')); }
-    public function update(Request $request, Achievement $achievement) {
-        $data=$this->validated($request);
-        foreach (['student_photo','certificate_image'] as $field) if ($request->hasFile($field)) {
-            if ($achievement->$field) Storage::disk('public')->delete($achievement->$field);
-            $data[$field]=$request->file($field)->store($field==='student_photo'?'achievements/students':'achievements/certificates','public');
+
+    public function create(): View
+    {
+        return view('admin.achievements.create');
+    }
+
+    public function store(Request $request): RedirectResponse
+    {
+        $validated = $this->validateAchievement($request);
+
+        if ($request->hasFile('student_photo')) {
+            $validated['student_photo'] = $request->file('student_photo')->store('achievements', 'public');
         }
-        $achievement->update($data);
-        return redirect()->route('admin.achievements.index')->with('success','Achievement updated.');
+
+        $validated['sort_order'] = $validated['sort_order'] ?? 0;
+        $validated['is_published'] = $request->boolean('is_published');
+
+        Achievement::create($validated);
+
+        return redirect()->route('admin.achievements.index')->with('success', 'Achievement added.');
     }
-    public function destroy(Achievement $achievement) {
-        foreach (['student_photo','certificate_image'] as $field) if ($achievement->$field) Storage::disk('public')->delete($achievement->$field);
+
+    public function edit(Achievement $achievement): View
+    {
+        return view('admin.achievements.edit', compact('achievement'));
+    }
+
+    public function update(Request $request, Achievement $achievement): RedirectResponse
+    {
+        $validated = $this->validateAchievement($request);
+
+        if ($request->hasFile('student_photo')) {
+            if ($achievement->student_photo) {
+                Storage::disk('public')->delete($achievement->student_photo);
+            }
+            $validated['student_photo'] = $request->file('student_photo')->store('achievements', 'public');
+        }
+
+        $validated['sort_order'] = $validated['sort_order'] ?? 0;
+        $validated['is_published'] = $request->boolean('is_published');
+
+        $achievement->update($validated);
+
+        return redirect()->route('admin.achievements.index')->with('success', 'Achievement updated.');
+    }
+
+    public function destroy(Achievement $achievement): RedirectResponse
+    {
+        if ($achievement->student_photo) {
+            Storage::disk('public')->delete($achievement->student_photo);
+        }
+
         $achievement->delete();
-        return back()->with('success','Achievement deleted.');
+
+        return redirect()->route('admin.achievements.index')->with('success', 'Achievement deleted.');
     }
-    private function validated(Request $request): array {
+
+    private function validateAchievement(Request $request): array
+    {
         return $request->validate([
-            'student_name'=>'required|string|max:150','diploma_title'=>'required|string|max:180',
-            'awarding_body'=>'nullable|string|max:180','completion_year'=>'required|integer|min:1980|max:'.(date('Y')+1),
-            'story'=>'nullable|string|max:2000','student_photo'=>'nullable|image|max:3072',
-            'certificate_image'=>'nullable|image|max:5120','is_published'=>'nullable|boolean',
+            'student_name' => ['required', 'string', 'max:255'],
+            'diploma_title' => ['required', 'string', 'max:255'],
+            'awarding_body' => ['required', 'string', 'max:255'],
+            'completion_year' => ['required', 'string', 'max:20'],
+            'sort_order' => ['nullable', 'integer', 'min:0'],
+            'student_photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'remarks' => ['nullable', 'string', 'max:2000'],
+            'is_published' => ['nullable', 'boolean'],
         ]);
     }
 }

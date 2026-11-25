@@ -1,70 +1,79 @@
 @extends('layouts.public')
-@section('title','Student Enrollment')
+@section('title', 'Enroll')
+@section('meta_description', 'Submit an online admission inquiry for Professional Youth Academy.')
 @section('content')
 <section class="page-hero">
     <div class="container">
-        <span class="eyebrow">APPLICATION FORM</span>
-        <h1>Start your enrollment.</h1>
-        <p>Submit your details. Our admissions team will contact you to discuss the next steps.</p>
+        <span class="eyebrow"><i class="bi bi-pencil-square"></i> ADMISSIONS</span>
+        <h1>Student Enrollment</h1>
+        <p>Complete the form below. Our admissions team will review your inquiry and contact you with next steps.</p>
     </div>
 </section>
+
 <section class="section-pad">
     <div class="container">
         <div class="form-shell">
-            <form method="POST" action="{{ route('enroll.store') }}">
+            <form method="POST" action="{{ route('enroll.store') }}" novalidate>
                 @csrf
+                <h4 class="fw-bold mb-3">1. Program Selection</h4>
+                <div class="mb-4">
+                    <label class="form-label">Select Diploma *</label>
+                    <select name="diploma_id" class="form-select @error('diploma_id') is-invalid @enderror" required>
+                        <option value="">Choose a diploma program...</option>
+                        @foreach($diplomas as $d)
+                            <option value="{{ $d->id }}" @selected((string) old('diploma_id', $selectedDiploma?->id) === (string) $d->id)>
+                                {{ $d->title }} — {{ $d->duration }} ({{ $d->currency }} {{ number_format($d->fee) }})
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('diploma_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+
+                <h4 class="fw-bold mb-3">2. Applicant Details</h4>
                 <div class="row g-3">
-                    <div class="col-12">
-                        <label class="form-label">Select diploma *</label>
-                        <select name="diploma_id" class="form-select" required>
-                            <option value="">Choose a diploma</option>
-                            @foreach($diplomas as $d)
-                            <option value="{{ $d->id }}" @selected(old('diploma_id',optional($diploma)->id)==$d->id)>{{ $d->title }} — {{ $d->currency }} {{ number_format($d->fee) }}</option>
-                            @endforeach</select>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Full name *</label>
-                            <input name="full_name" class="form-control" value="{{ old('full_name') }}" required maxlength="150">
-                        </div><div class="col-md-6">
-                            <label class="form-label">Father's name</label>
-                            <input name="father_name" class="form-control" value="{{ old('father_name') }}">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Phone / WhatsApp *</label>
-                            <input name="phone" class="form-control" value="{{ old('phone') }}" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Email address</label>
-                            <input type="email" name="email" class="form-control" value="{{ old('email') }}">
-                        </div><div class="col-md-6">
-                            <label class="form-label">CNIC (optional)</label>
-                            <input name="cnic" class="form-control" value="{{ old('cnic') }}">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Last education</label>
-                            <input name="education" class="form-control" value="{{ old('education') }}" placeholder="e.g. Intermediate">
-                        </div>
-                        <div class="col-12">
-                            <label class="form-label">Address</label>
-                            <textarea name="address" class="form-control" rows="3">{{ old('address') }}</textarea>
-                        </div>
-                        <div class="col-12">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" required id="consent">
-                                <label class="form-check-label small" for="consent">
-                                    I agree that Academy may contact me about this application.
-                                </label>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <button class="btn btn-warning btn-lg">Submit application</button>
-                            <p class="small text-muted mt-3 mb-0">
-                                No online payment is collected. Admission is confirmed only after the academy contacts and approves your application.
-                            </p>
-                        </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Full Name *</label>
+                        <input type="text" name="full_name" value="{{ old('full_name') }}" class="form-control @error('full_name') is-invalid @enderror" required>
+                        @error('full_name')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>
-                </form>
-            </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Father / Guardian Name</label>
+                        <input type="text" name="father_name" value="{{ old('father_name') }}" class="form-control">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Phone / WhatsApp *</label>
+                        <input type="text" name="phone" value="{{ old('phone') }}" class="form-control @error('phone') is-invalid @enderror" placeholder="+92 3XX XXXXXXX" required>
+                        @error('phone')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Email Address</label>
+                        <input type="email" name="email" value="{{ old('email') }}" class="form-control @error('email') is-invalid @enderror">
+                        @error('email')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">CNIC / ID Number</label>
+                        <input type="text" name="cnic" value="{{ old('cnic') }}" class="form-control" placeholder="XXXXX-XXXXXXX-X">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Highest Qualification</label>
+                        <input type="text" name="qualification" value="{{ old('qualification') }}" class="form-control" placeholder="e.g., Matric, FA/FSc, BS">
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Residential Address</label>
+                        <input type="text" name="address" value="{{ old('address') }}" class="form-control">
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Additional Notes</label>
+                        <textarea name="notes" rows="3" class="form-control" placeholder="Preferred batch timing, questions, or background...">{{ old('notes') }}</textarea>
+                    </div>
+                </div>
+
+                <button class="btn btn-gold btn-lg w-100 mt-4">
+                    Submit Application <i class="bi bi-send-check ms-1"></i>
+                </button>
+                <p class="small text-muted text-center mt-3 mb-0">No payment is collected online. Admission confirmation is handled directly by the academy.</p>
+            </form>
         </div>
-    </section>
+    </div>
+</section>
 @endsection
